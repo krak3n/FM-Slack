@@ -29,7 +29,8 @@ setup(
     # Dependencies
     install_requires=[
         'redis===2.10.3',
-        'click===3.3'
+        'click===3.3',
+        'requests===2.5.3'
     ],
     entry_points={
         'console_scripts': [
