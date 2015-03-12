@@ -1,8 +1,0 @@
-setup.py
-FM_Slack.egg-info/PKG-INFO
-FM_Slack.egg-info/SOURCES.txt
-FM_Slack.egg-info/dependency_links.txt
-FM_Slack.egg-info/not-zip-safe
-FM_Slack.egg-info/requires.txt
-FM_Slack.egg-info/top_level.txt
-fmslack/__init__.py

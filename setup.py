@@ -18,7 +18,7 @@ setup(
     version=fmslack.__version__,
     author=fmslack.__author__,
     author_email=fmslack.__author_email__,
-    url='https://github.com/thisissoon/FM-Slack'
+    url='https://github.com/thisissoon/FM-Slack',
     description='This application posts currently playing track to Slack',
     packages=find_packages(
         exclude=[
@@ -28,5 +28,11 @@ setup(
     zip_safe=False,
     # Dependencies
     install_requires=[
-        'redis===2.10.3'
-    ])
+        'redis===2.10.3',
+        'click===3.3'
+    ],
+    entry_points={
+        'console_scripts': [
+            'fm-slack = fmslack.cli:run'
+        ]
+    })
