@@ -29,8 +29,46 @@ def slack(redis_uri, redis_channel, slack_webhook_url, api_url):
                 track = query_api(api_url, data['uri'])
                 if track is not None:
                     print track
+                    slack = slack_post(
+                        slack_webhook_url,
+                        track['name'],
+                        track['album']['artists'][0]['name'],
+                        track['album']['name'],
+                        track['album']['images'][1]['url'])
+
+                    if slack is None:
+                        print 'slack error'
+
                 else:
                     print 'failed'
+
+def slack_post(slack_webhook_url, name, artist, album, image):
+    payload = {
+        'attachments': [
+            {
+                'fallback': 'Playing ' + name,
+                'text': 'Playing ' + name,
+                'fields': [
+                    {
+                        'title': 'Artist',
+                        'value': artist,
+                        'short': 'true'
+                    },{
+                        'title': 'Album',
+                        'value': album,
+                        'short': 'true'
+                    }
+                ],
+                'image_url': image,
+            }
+        ]
+    }
+    headers = {'content-type': 'application/json'}
+    r = requests.post(slack_webhook_url, data=json.dumps(payload), headers=headers)
+    if not r.status_code == 200:
+        return None
+
+    return 'Success'
 
 def query_api(api_url, uri):
     url = '{0}/tracks/{1}'.format(api_url, uri)
