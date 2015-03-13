@@ -19,9 +19,9 @@ sys.path.append(os.path.join(root, 'fmslack'))
 import fmslack
 
 INSTALL_REQS = [
-    'redis===2.10.3',
-    'click===3.3',
-    'requests===2.5.3']
+    'redis==2.10.3',
+    'click==3.3',
+    'requests==2.5.3']
 
 TEST_REQS = [
     'nose==1.3.4',
