@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
+"""
+fmslack.cli
+===========
+
+CLI interface for FM Slack.
+"""
+
 import click
 import json
 import logging
@@ -6,6 +16,7 @@ import urlparse
 
 from redis import StrictRedis
 
+
 LOG_FORMAT = "[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s"
 
 logger = logging.getLogger('fmslack')
@@ -13,17 +24,42 @@ handler = logging.StreamHandler()
 handler.setFormatter(logging.Formatter(LOG_FORMAT))
 logger.addHandler(handler)
 
+
 @click.option(
     '--log-level',
     '-l',
     type=click.Choice(['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']),
     default='ERROR')
-@click.option('--redis-uri', '-r', required=True)
-@click.option('--redis-channel', '-c', required=True)
-@click.option('--slack-webhook-url', '-s')
-@click.option('--api-url', '-a', required=True)
+@click.option(
+    '--redis-uri',
+    '-r',
+    help='e.g: redis://localhost:6379/',
+    default='redis://localhost:6379/')
+@click.option(
+    '--redis-channel',
+    '-c',
+    help='Channel to listen on for events',
+    required=True)
+@click.option('--slack-webhook-url', '-s', help='Webhook URL of slack integration')
+@click.option('--api-url', '-a', help='URL of FM API server', required=True)
 @click.command()
 def slack(redis_uri, redis_channel, slack_webhook_url, api_url, log_level):
+    """Listens for play event on redis channel. On play event, retrieves
+    track data from FM API and triggers post to Slack.
+
+    Arguments
+    ---------
+    redis_uri : str
+        URI of redis server
+    redis_channel : str
+        Channel to listen on for events
+    slack_webhook_url : str
+        Webhook URL of slack integration
+    api_url : str
+        URL of FM API server
+    log_level : str
+        Logging level
+    """
 
     logger.setLevel(logging.getLevelName(log_level))
     logger.info('Starting..')
@@ -49,7 +85,8 @@ def slack(redis_uri, redis_channel, slack_webhook_url, api_url, log_level):
                 logger.info('Event: PLAY')
                 track = query_api(api_url, data['uri'])
                 if track is not None:
-                    logger.debug('API returned track data for {0}'.format(track['spotify_uri']))
+                    logger.debug(
+                        'API returned track data for {0}'.format(track['spotify_uri']))
                     slack = slack_post(
                         slack_webhook_url,
                         track['name'],
@@ -57,7 +94,24 @@ def slack(redis_uri, redis_channel, slack_webhook_url, api_url, log_level):
                         track['album']['name'],
                         track['album']['images'][2]['url'])
 
+
 def slack_post(slack_webhook_url, name, artist, album, image):
+    """ Post to slack incoming webhook.
+
+    Arguments
+    ---------
+    slack_webhook_url : str
+        Webhook URL of slack integration
+    name : str
+        Track name to post
+    artist : str
+        Artist name to post
+    album : str
+        Album name to post
+    image : str
+        Album image to post
+    """
+
     logger.debug('Posting to Slack webhook {0}'.format(slack_webhook_url))
     payload = {
         'attachments': [
@@ -84,7 +138,23 @@ def slack_post(slack_webhook_url, name, artist, album, image):
     if not r.status_code == 200:
         logger.error('Slack returned invalid status code {0}'.format(r.status_code))
 
+
 def query_api(api_url, uri):
+    """ Get track data from FM API.
+
+    Arguments
+    ---------
+    api_url : str
+        URL of FM API server
+    uri : str
+        spotify uri of track to request
+
+    Returns
+    -------
+    dict
+        response from API with track data
+    """
+
     url = '{0}/tracks/{1}'.format(api_url, uri)
     r = requests.get(url)
     if not r.status_code == 200:
@@ -97,4 +167,7 @@ def query_api(api_url, uri):
         return None
 
 def run():
+    """ Main run command used for the entry point.
+    """
+
     slack()

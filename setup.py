@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+"""
+FM Slack
+========
+
+Slack integration for FM player.
+"""
+
 import os
 import sys
 
