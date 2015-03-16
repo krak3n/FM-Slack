@@ -164,4 +164,4 @@ def run():
     """ Main run command used for the entry point.
     """
 
-    slack()
+    slack(auto_envvar_prefix='FM_SLACK')
