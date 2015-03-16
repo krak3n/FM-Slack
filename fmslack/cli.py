@@ -115,7 +115,7 @@ def slack_post(slack_webhook_url, name, artist, album, image):
     logger.debug('Posting to Slack webhook {0}'.format(slack_webhook_url))
 
     payload = {
-        "text": "Now playing: {artist} - {album}: {name}*".format(
+        "text": "Now playing: *{artist} - {album}: {name}*".format(
             artist=artist,
             album=album,
             name=name),
