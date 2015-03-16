@@ -85,9 +85,9 @@ def slack(redis_uri, redis_channel, slack_webhook_url, api_url, log_level):
                 logger.info('Event: PLAY')
                 track = query_api(api_url, data['uri'])
                 if track is not None:
-                    logger.debug(
-                        'API returned track data for {0}'.format(track['spotify_uri']))
-                    slack = slack_post(
+                    logger.debug('API returned track data for {0}'.format(
+                        track['spotify_uri']))
+                    slack_post(
                         slack_webhook_url,
                         track['name'],
                         track['album']['artists'][0]['name'],
@@ -113,28 +113,21 @@ def slack_post(slack_webhook_url, name, artist, album, image):
     """
 
     logger.debug('Posting to Slack webhook {0}'.format(slack_webhook_url))
+
     payload = {
-        'attachments': [
-            {
-                'fallback': 'Playing ' + name,
-                'text': 'Playing ' + name,
-                'fields': [
-                    {
-                        'title': 'Artist',
-                        'value': artist,
-                        'short': 'true'
-                    },{
-                        'title': 'Album',
-                        'value': album,
-                        'short': 'true'
-                    }
-                ],
-                'image_url': image,
-            }
-        ]
+        "text": "Now playing: *{artist} - {album}: {name}*".format(
+            artist=artist,
+            album=album,
+            name=name),
+        "channel": "#general",
+        "username": "thisissoon.fm",
+        "icon_url": image
     }
-    headers = {'content-type': 'application/json'}
-    r = requests.post(slack_webhook_url, data=json.dumps(payload), headers=headers)
+
+    r = requests.post(slack_webhook_url, data=json.dumps(payload), headers={
+        'content-type': 'application/json'
+    })
+
     if not r.status_code == 200:
         logger.error('Slack returned invalid status code {0}'.format(r.status_code))
 
@@ -165,6 +158,7 @@ def query_api(api_url, uri):
         return r.json()
     except ValueError:
         return None
+
 
 def run():
     """ Main run command used for the entry point.
