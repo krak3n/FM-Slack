@@ -24,11 +24,11 @@ INSTALL_REQS = [
     'requests==2.5.3']
 
 TEST_REQS = [
-    'nose==1.3.4',
     'coverage==3.7.1',
-    'sure==1.2.8',
+    'mock==1.0.1',
+    'nose==1.3.4',
     'pinocchio==0.3',
-    'mock==1.0.1']
+    'sure==1.2.8']
 
 DEVELOP_REQS = TEST_REQS + []
 
