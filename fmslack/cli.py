@@ -124,12 +124,12 @@ def slack_post(slack_webhook_url, name, artist, album, image):
         "icon_url": image
     }
 
-    r = requests.post(slack_webhook_url, data=json.dumps(payload), headers={
+    response = requests.post(slack_webhook_url, data=json.dumps(payload), headers={
         'content-type': 'application/json'
     })
 
-    if not r.status_code == 200:
-        logger.error('Slack returned invalid status code {0}'.format(r.status_code))
+    if not response.status_code == 200:
+        logger.error('Slack returned invalid status code {0}'.format(response.status_code))
 
 
 def query_api(api_url, uri):
@@ -149,13 +149,13 @@ def query_api(api_url, uri):
     """
 
     url = '{0}/tracks/{1}'.format(api_url, uri)
-    r = requests.get(url)
-    if not r.status_code == 200:
-        logger.error('API returned invalid status code {0}'.format(r.status_code))
+    response = requests.get(url)
+    if not response.status_code == 200:
+        logger.error('API returned invalid status code {0}'.format(response.status_code))
         return None
 
     try:
-        return r.json()
+        return response.json()
     except ValueError:
         return None
 
