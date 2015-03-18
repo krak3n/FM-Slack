@@ -8,6 +8,8 @@ fmslack.cli
 CLI interface for FM Slack.
 """
 
+from __future__ import unicode_literals
+
 import click
 import json
 import logging
@@ -15,7 +17,6 @@ import requests
 import urlparse
 
 from redis import StrictRedis
-from __future__ import unicode_literals
 
 
 LOG_FORMAT = "[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s"
