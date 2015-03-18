@@ -1,0 +1,5 @@
+# Installation Requirements for FM Slack
+
+click==3.3
+redis==2.10.3
+requests==2.5.3

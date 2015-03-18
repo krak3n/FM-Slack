@@ -18,19 +18,37 @@ sys.path.append(os.path.join(root, 'fmslack'))
 
 import fmslack
 
-INSTALL_REQS = [
-    'redis==2.10.3',
-    'click==3.3',
-    'requests==2.5.3']
 
-TEST_REQS = [
-    'nose==1.3.4',
-    'coverage==3.7.1',
-    'sure==1.2.8',
-    'pinocchio==0.3',
-    'mock==1.0.1']
+def read_requirements(filename):
+    """ Read requirements file and process them into a list
+    for usage in the setup function.
+    Arguments
+    ---------
+    filename : str
+        Path to the file to read line by line
+    Returns
+    --------
+    list
+        list of requirements::
+            ['package==1.0', 'thing>=9.0']
+    """
 
-DEVELOP_REQS = TEST_REQS + []
+    requirements = []
+    with open(filename) as f:
+        for line in f.readlines():
+            line = line.strip()
+            if not line or line.startswith('#') or line == '':
+                continue
+            requirements.append(line)
+    requirements.reverse()
+    return requirements
+
+
+# Requirements
+
+INSTALL_REQS = read_requirements('install.reqs')
+TESTING_REQS = read_requirements('test.reqs')
+DEVELOP_REQS = TESTING_REQS + read_requirements('develop.reqs')
 
 # Setup
 
@@ -52,7 +70,7 @@ setup(
     extras_require={
         'develop': DEVELOP_REQS
     },
-    tests_require=TEST_REQS,
+    tests_require=TESTING_REQS,
     entry_points={
         'console_scripts': [
             'fm-slack = fmslack.cli:run'
