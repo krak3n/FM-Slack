@@ -21,4 +21,4 @@ dependencies:
 
 test:
   override:
-    - docker run -it --name test --net=host $REPO:$TAG make test
+    - docker run -it --name test --net=host --volume="`pwd`/.git:/fm/.git" -e CIRCLE_BRANCH=$CIRCLE_BRANCH -e COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN $REPO:$TAG make circleci
