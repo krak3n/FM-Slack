@@ -21,4 +21,4 @@ dependencies:
 
 test:
   override:
-    - docker run -it --name test --net=host $REPO:$TAG make develop && make test
+    - docker run -it --name test --net=host $REPO:$TAG make test
