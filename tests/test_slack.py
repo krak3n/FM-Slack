@@ -8,7 +8,7 @@ Tests for the Slack integration
 import mock
 import unittest
 
-from fmslack.cli import slack, query_api, slack_post
+from fmslack.cli import query_api, slack_post
 
 
 class BaseTestCase(unittest.TestCase):
@@ -32,17 +32,17 @@ class TestQueryApi(BaseTestCase):
 
     def test_tracks_request(self):
 
-        get = mock.MagicMock(status_code=200, data={'name':'some name'})
+        get = mock.MagicMock(status_code=200, data={'name': 'some name'})
         self.requests.get.return_value = get
-        response = query_api('http://api.thisissoon.fm', 'spotify_uri')
+        query_api('http://api.thisissoon.fm', 'uri')
 
-        self.requests.get.assert_called_once_with('http://api.thisissoon.fm/tracks/spotify_uri')
+        self.requests.get.assert_called_once_with('http://api.thisissoon.fm/tracks/uri')
 
     def test_tracks_request_error(self):
 
         get = mock.MagicMock(status_code=404)
         self.requests.get.return_value = get
-        response = query_api('http://api.thisissoon.fm', 'spotify_uri')
+        query_api('http://api.thisissoon.fm', 'uri')
 
         self.logger.error.assert_called_once_with('API returned invalid status code 404')
 
@@ -60,7 +60,7 @@ class TestSlackPost(BaseTestCase):
             'image': 'http://albumimage.url'
         }
 
-        response = slack_post('http://slack.com', track['name'], track['artist'], track['album'], track['image'])
+        slack_post('http://slack.com', track['name'], track['artist'], track['album'], track['image'])
 
         self.requests.post.assert_called_once()
 
@@ -75,7 +75,6 @@ class TestSlackPost(BaseTestCase):
             'image': 'http://albumimage.url'
         }
 
-        response = slack_post('http://slack.com', track['name'], track['artist'], track['album'], track['image'])
+        slack_post('http://slack.com', track['name'], track['artist'], track['album'], track['image'])
 
         self.logger.error.assert_called_once()
-

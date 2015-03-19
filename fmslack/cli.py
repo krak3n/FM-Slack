@@ -86,7 +86,7 @@ def slack(redis_uri, redis_channel, slack_webhook_url, api_url, log_level):
                 track = query_api(api_url, data['uri'])
                 if track is not None:
                     logger.debug('API returned track data for {0}'.format(
-                        track['spotify_uri']))
+                        track['uri']))
                     slack_post(
                         slack_webhook_url,
                         track['name'],
