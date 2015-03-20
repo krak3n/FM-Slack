@@ -5,6 +5,7 @@ tests.test_slack
 Tests for the Slack integration
 """
 
+import json
 import mock
 import unittest
 
@@ -49,32 +50,52 @@ class TestQueryApi(BaseTestCase):
 
 class TestSlackPost(BaseTestCase):
 
-    def test_slack_post(self):
+    track = {
+        'name': 'track name',
+        'artists': [{'name': 'artist 1'}, {'name': 'artist 2'}],
+        'album': 'album name',
+        'image': 'http://albumimage.url'
+    }
 
+    def test_slack_post(self):
         post = mock.MagicMock(status_code=200)
         self.requests.post.return_value = post
-        track = {
-            'name': 'track name',
-            'artist': 'artist name',
-            'album': 'album name',
-            'image': 'http://albumimage.url'
-        }
 
-        slack_post('http://slack.com', track['name'], track['artist'], track['album'], track['image'])
+        slack_post(
+            'http://slack.com',
+            self.track['name'],
+            self.track['artists'],
+            self.track['album'],
+            self.track['image'])
 
         self.requests.post.assert_called_once()
 
-    def test_slack_post_error(self):
+    def test_mutliple_artists_concatinated(self):
+        post = mock.MagicMock(status_code=200)
+        self.requests.post.return_value = post
 
+        slack_post(
+            'http://slack.com',
+            self.track['name'],
+            self.track['artists'],
+            self.track['album'],
+            self.track['image'])
+
+        text = json.loads(self.requests.post.call_args[1]['data'])['text']
+        expected = u'Now playing: *artist 1 & artist 2 - album name: track name*'
+
+        self.requests.post.assert_called_once()
+        assert text == expected
+
+    def test_slack_post_error(self):
         post = mock.MagicMock(status_code=401)
         self.requests.post.return_value = post
-        track = {
-            'name': 'track name',
-            'artist': 'artist name',
-            'album': 'album name',
-            'image': 'http://albumimage.url'
-        }
 
-        slack_post('http://slack.com', track['name'], track['artist'], track['album'], track['image'])
+        slack_post(
+            'http://slack.com',
+            self.track['name'],
+            self.track['artists'],
+            self.track['album'],
+            self.track['image'])
 
         self.logger.error.assert_called_once()

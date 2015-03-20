@@ -87,15 +87,16 @@ def slack(redis_uri, redis_channel, slack_webhook_url, api_url, log_level):
                 if track is not None:
                     logger.debug('API returned track data for {0}'.format(
                         track['uri']))
+
                     slack_post(
                         slack_webhook_url,
                         track['name'],
-                        track['album']['artists'][0]['name'],
+                        track['artists'],
                         track['album']['name'],
                         track['album']['images'][2]['url'])
 
 
-def slack_post(slack_webhook_url, name, artist, album, image):
+def slack_post(slack_webhook_url, name, artists, album, image):
     """ Post to slack incoming webhook.
 
     Arguments
@@ -104,8 +105,8 @@ def slack_post(slack_webhook_url, name, artist, album, image):
         Webhook URL of slack integration
     name : str
         Track name to post
-    artist : str
-        Artist name to post
+    artists : list
+        List of artist dictionaries
     album : str
         Album name to post
     image : str
@@ -114,9 +115,11 @@ def slack_post(slack_webhook_url, name, artist, album, image):
 
     logger.debug('Posting to Slack webhook {0}'.format(slack_webhook_url))
 
+    artists = ' & '.join([artist['name'] for artist in artists])
+
     payload = {
-        "text": "Now playing: *{artist} - {album}: {name}*".format(
-            artist=artist,
+        "text": "Now playing: *{artists} - {album}: {name}*".format(
+            artists=artists,
             album=album,
             name=name),
         "channel": "#general",
