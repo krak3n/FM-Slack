@@ -36,6 +36,10 @@ test:
 	pip install -r test.reqs
 	python setup.py nosetests
 
+circleci:
+	$(MAKE) test
+	coveralls
+
 sdist: clean
 	python setup.py sdist
 	find dist -type f -exec ls {} \; | xargs tar -ztvf $$1

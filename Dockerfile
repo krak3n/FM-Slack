@@ -5,6 +5,7 @@ ADD https://bootstrap.pypa.io/get-pip.py /get-pip.py
 RUN apt-get update && apt-get install -y \
         build-essential \
         python-dev \
+        git \
     && apt-get clean \
     && apt-get autoclean \
     && apt-get autoremove -y \
