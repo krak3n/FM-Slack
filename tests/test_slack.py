@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# encoding: utf-8
+
 """
 tests.test_slack
 ================
@@ -124,3 +127,21 @@ class TestSlackPost(BaseTestCase):
             self.track['artists'],
             self.track['album'],
             self.track['image'])
+
+    def test_unicode(self):
+        post = mock.MagicMock(status_code=200)
+        self.requests.post.return_value = post
+        self.track['name'] = u'Track name with some funky chars çö'
+
+        slack_post(
+            'http://slack.com',
+            self.track['name'],
+            self.track['artists'],
+            self.track['album'],
+            self.track['image'])
+
+        text = json.loads(self.requests.post.call_args[1]['data'])['text']
+        expected = u'Now playing: *artist 1 & artist 2 - album name: Track name with some funky chars \xe7\xf6*'
+
+        self.requests.post.assert_called_once()
+        assert text == expected
