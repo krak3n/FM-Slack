@@ -135,7 +135,8 @@ def slack_post(slack_webhook_url, name, artists, album, image):
             data=json.dumps(payload),
             headers={
                 'content-type': 'application/json'
-            })
+            },
+            verify=False)
     except requests.exceptions.RequestException as error:
         logger.error(error)
 
@@ -162,7 +163,7 @@ def query_api(api_url, uri):
     url = '{0}/tracks/{1}'.format(api_url, uri)
 
     try:
-        response = requests.get(url)
+        response = requests.get(url, verify=False)
     except requests.exceptions.RequestException as error:
         logger.error(error)
         return None
