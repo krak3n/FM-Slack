@@ -42,7 +42,8 @@ class TestQueryApi(BaseTestCase):
         query_api('http://api.thisissoon.fm', 'uri')
 
         self.requests.get.assert_called_once_with(
-            'http://api.thisissoon.fm/tracks/uri')
+            'http://api.thisissoon.fm/tracks/uri',
+            verify=False)
 
     def test_tracks_status_error(self):
 
